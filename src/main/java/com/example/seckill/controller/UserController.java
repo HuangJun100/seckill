@@ -6,6 +6,7 @@ import com.example.seckill.entity.User;
 import com.example.seckill.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,9 +29,11 @@ import javax.servlet.http.HttpServletResponse;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @PostMapping("/login")
-    public String loginByUser(@RequestParam(name ="username") String username,
+    public String loginByUser(@RequestParam(name = "username") String username,
                               @RequestParam(name = "password") String password,
                               HttpServletRequest request,
                               HttpServletResponse response) {
@@ -38,10 +41,12 @@ public class UserController {
         User dbUser = userService.getOne(new LambdaQueryWrapper<User>()
                 .eq(User::getNickname, username));
         //如果存在的话，跳转hello，否则返回home页
-        if(dbUser!=null && dbUser.getPassword().equals(password)){
+        if (dbUser != null && dbUser.getPassword().equals(password)) {
+            redisTemplate.opsForValue().set("user:", dbUser);
             return "hello";
-        }else{
-        return "home";}
+        } else {
+            return "home";
+        }
     }
 
     @GetMapping("/home")
