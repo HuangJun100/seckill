@@ -4,6 +4,7 @@ import com.example.seckill.interceptor.UserLoginInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -17,11 +18,19 @@ public class MvcConfig implements WebMvcConfigurer {
     @Autowired
     private UserLoginInterceptor userLoginInterceptor;
 
-    //拦截器注册到MVC中
-    public void addInterceptors(InterceptorRegistry interceptorRegistry) {
-        interceptorRegistry.addInterceptor(userLoginInterceptor)
-//                .addPathPatterns("/")
-                .excludePathPatterns("/login");
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/").setViewName("/home");
+        registry.addViewController("/login").setViewName("/home");
     }
 
+    //拦截器注册到MVC中
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(userLoginInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/home")
+                .excludePathPatterns("/login");
+    }
 }

@@ -41,7 +41,7 @@ public class UserLoginInterceptor implements HandlerInterceptor {
 //        }
 //        if (servletPath.startsWith("/") && request.getSession().getAttribute("User") == null) {
             request.getSession().setAttribute("errorMsg", "请登录");
-            response.sendRedirect(request.getContextPath() + "/");
+            response.sendRedirect(request.getContextPath() + "/home");
             return false;
         } else {
             request.getSession().removeAttribute("erroeMsg");
