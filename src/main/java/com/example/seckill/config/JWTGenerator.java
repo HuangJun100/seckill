@@ -7,6 +7,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Component;
 
+import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +24,8 @@ public class JWTGenerator {
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
     //    生成JWT的时间
     private Date generateDate;
+    private static final String key = "hjkhkh";
+
 
     /**
      * 根据用户信息生成Jwt
@@ -36,7 +39,7 @@ public class JWTGenerator {
         claims.put("userName", user.getNickname());
         claims.put("passWord", user.getPassword());
 //        生成签名的密钥
-        String key = user.getPassword();
+//        String key = user.getPassword();
         //生成签发人
 //        String subject = user.getNickname();
 //          JWT生成的日期
@@ -52,18 +55,15 @@ public class JWTGenerator {
 
     /**
      * JWT解密后校验
-     * @param user
      * @param jwts
      * @return
      */
 
-    public Boolean isVerify(User user, String jwts) {
+    public Claims isVerify(String jwts) {
         Claims body = Jwts.parser()
-                .setSigningKey(user.getPassword())
+                .setSigningKey(key)
                 .parseClaimsJws(jwts).getBody();
-        if (body.get("passWord").equals(user.getPassword())) {
-            return true;
-        } else return false;
+        return body;
     }
 
 }

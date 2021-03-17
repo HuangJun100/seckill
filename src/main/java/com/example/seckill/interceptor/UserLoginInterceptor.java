@@ -2,14 +2,15 @@ package com.example.seckill.interceptor;
 
 import com.example.seckill.config.JWTGenerator;
 import com.example.seckill.entity.User;
+import com.example.seckill.utils.CookieUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
 
 /**
  * 功能：用户登录拦截器
@@ -30,22 +31,23 @@ public class UserLoginInterceptor implements HandlerInterceptor {
      */
     @Autowired
     private JWTGenerator jwtGenerator;
+    @Autowired
+    private CookieUtil cookieUtil;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String servletPath = request.getServletPath();
-//        拦截时可以做的其他操作
-        String token = request.getHeader("token");
-        User user = (User)request.getSession().getAttribute("user");
-        if (user!=null && jwtGenerator.isVerify(user,token) ){
-//        }
-//        if (servletPath.startsWith("/") && request.getSession().getAttribute("User") == null) {
-            request.getSession().setAttribute("errorMsg", "请登录");
-            response.sendRedirect(request.getContextPath() + "/home");
-            return true;
+
+        String username = cookieUtil.getCookieByName(request, "username");
+        if (username != null) {
+            User redisUser = (User) redisTemplate.opsForValue().get("user" + username);
+            if (redisUser != null) {
+                return true;
+            }
+            return false;
         } else {
-            request.getSession().removeAttribute("erroeMsg");
-            return true;
+            return false;
         }
 
     }

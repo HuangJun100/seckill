@@ -10,9 +10,9 @@ public class DemoController {
     /**
      *
      */
-    @GetMapping("/demo")
+    @GetMapping("/welcom")
     public String hello(Model model){
         model.addAttribute("name","hello");
-        return "hello";
+        return "welcom";
     }
 }
