@@ -1,6 +1,5 @@
 package com.example.seckill.interceptor;
 
-import com.example.seckill.config.JWTGenerator;
 import com.example.seckill.entity.User;
 import com.example.seckill.utils.CookieUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,28 +19,27 @@ import javax.servlet.http.HttpServletResponse;
  **/
 @Component
 public class UserLoginInterceptor implements HandlerInterceptor {
-    /**
-     * 自定义拦截规则
-     *
-     * @param request
-     * @param response
-     * @param handler
-     * @return
-     * @throws Exception
-     */
-    @Autowired
-    private JWTGenerator jwtGenerator;
+
     @Autowired
     private CookieUtil cookieUtil;
     @Autowired
     private RedisTemplate redisTemplate;
 
+    /**
+     * 重写的拦截器规则
+     * @param request HttpServletRequest
+     * @param response HttpServletResponse
+     * @param handler
+     * @return
+     * @throws Exception
+     */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-        String username = cookieUtil.getCookieByName(request, "username");
+        String username = cookieUtil.getCookieByName(request, "user");
         if (username != null) {
-            User redisUser = (User) redisTemplate.opsForValue().get("user" + username);
+            User redisUser = (User) redisTemplate.opsForValue().get("user:" + username);
+
             if (redisUser != null) {
                 return true;
             }

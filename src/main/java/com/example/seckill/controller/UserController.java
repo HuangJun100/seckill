@@ -66,9 +66,8 @@ public class UserController {
             //存入session
 //            httpSession.setAttribute("user",dbUser);
             //存入cookie
-            response.addCookie(new Cookie("user",dbUser.getNickname()));
-            response.addHeader("Set-Cookie", "uid=112; Path=/; HttpOnly");
-            model.addAttribute("user",username);
+            response.addCookie(new Cookie("user", dbUser.getNickname()));
+            model.addAttribute("user", username);
             return "hello";
 
         } else {
@@ -81,6 +80,11 @@ public class UserController {
     @GetMapping("/home")
     public String getHomePage() {
         return "home";
+    }
+
+    @GetMapping("/hello")
+    public String getHelloPage() {
+        return "hello";
     }
 
 }

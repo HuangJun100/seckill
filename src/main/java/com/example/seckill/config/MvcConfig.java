@@ -18,11 +18,11 @@ public class MvcConfig implements WebMvcConfigurer {
     @Autowired
     private UserLoginInterceptor userLoginInterceptor;
 
-    @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/").setViewName("/home");
-        registry.addViewController("/login").setViewName("/home");
-    }
+//    @Override
+//    public void addViewControllers(ViewControllerRegistry registry) {
+//        registry.addViewController("/").setViewName("/home");
+//        registry.addViewController("/login").setViewName("/home");
+//    }
 
     //拦截器注册到MVC中
 
